@@ -5,7 +5,8 @@ const config = {
 	type: Phaser.AUTO, // Will use webgl if avialable overwise it will use the canvas
 	width: 640,
 	height: 360,
-	scene: gameScene
+	scene: gameScene,
+	parent: 'phaser-app'
 };
 
 /**
