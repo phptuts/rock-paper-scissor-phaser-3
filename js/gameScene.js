@@ -49,16 +49,29 @@ const fontStyle = { fontSize: '32px', fill: '#fff', backgroundColor: '#000', pad
  */
 const halfGameWidth = config.width / 2;
 
+/**
+ * This is the key for rock
+ */
+const ROCK = 'rock';
 
+/**
+ * This is the key for paper
+ */
+const PAPER = 'paper';
+
+/**	
+ * This is the key for scissors
+ */
+const SCISSORS = 'scissors';
 
 // Runs first and is used to set all the variables
 gameScene.init = () => {
 	
 	// key equals what it can beat.
 	gameScene.rules = { 
-		rock: 'scissors', 
-		paper : 'rock', 
-		scissors : 'paper' 
+		rock: SCISSORS, 
+		paper : ROCK, 
+		scissors : PAPER 
 	};
 	
 	gameScene.mode = NOTHING_SELECTION_MODE; // This is state the game is in
@@ -70,9 +83,9 @@ gameScene.init = () => {
 // Runs second and is used to set all the images used in the game
 gameScene.preload = () => {
 	gameScene.load.image('background', 'images/background.jpg');
-	gameScene.load.image('rock', 'images/pet_rock.png');
-	gameScene.load.image('paper', 'images/paper.png');
-	gameScene.load.image('scissors', 'images/scissors.gif');
+	gameScene.load.image(ROCK, 'images/pet_rock.png');
+	gameScene.load.image(PAPER, 'images/paper.png');
+	gameScene.load.image(SCISSORS, 'images/scissors.gif');
 
 };
 
@@ -81,15 +94,15 @@ gameScene.create = () => {
 	let bg = gameScene.add.sprite(0, 0, 'background');
     bg.setOrigin(0,0); // changes the center of the image
 	bg.depth = -2;
-	gameScene.playerRock = gameScene.add.sprite(100, 100, 'rock');
+	gameScene.playerRock = gameScene.add.sprite(100, 100, ROCK);
 	gameScene.playerRock.originalScale = .3;
 	gameScene.playerRock.setScale(gameScene.playerRock.originalScale);
 	
-	gameScene.playerPaper = gameScene.add.sprite(100, 200, 'paper');
+	gameScene.playerPaper = gameScene.add.sprite(100, 200, PAPER);
 	gameScene.playerPaper.originalScale = .3;
 	gameScene.playerPaper.setScale(gameScene.playerPaper.originalScale);
 
-	gameScene.playerScissors = gameScene.add.sprite(100, 300, 'scissors');
+	gameScene.playerScissors = gameScene.add.sprite(100, 300, SCISSORS);
 	gameScene.playerScissors.originalScale = .15;
 	gameScene.playerScissors.setScale(gameScene.playerScissors.originalScale);
 	gameScene.playerScissors.flipX = true;
@@ -103,19 +116,19 @@ gameScene.create = () => {
 	gameScene.playerSprites.forEach((sprite) => {
 		sprite.setInteractive();
 		sprite.on('pointerdown', (pointer, localX, localY) => {
-			gameScene.changeModeToSelect(sprite);
+			gameScene.selectMove(sprite);
 		});
 	});
 	
-	gameScene.computerRock = gameScene.add.sprite(540, 100, 'rock');
+	gameScene.computerRock = gameScene.add.sprite(540, 100, ROCK);
 	gameScene.computerRock.originalScale = .3;
 	gameScene.computerRock.setScale(gameScene.computerRock.originalScale);
 	
-	gameScene.computerPaper = gameScene.add.sprite(540, 200, 'paper');
+	gameScene.computerPaper = gameScene.add.sprite(540, 200, PAPER);
 	gameScene.computerPaper.originalScale = .3;
 	gameScene.computerPaper.setScale(gameScene.computerPaper.originalScale);
 
-	gameScene.computerScissors = gameScene.add.sprite(540, 300, 'scissors');
+	gameScene.computerScissors = gameScene.add.sprite(540, 300, SCISSORS);
 	gameScene.computerScissors.originalScale = .15;
 	gameScene.computerScissors.setScale(gameScene.computerScissors.originalScale);
 
@@ -226,7 +239,10 @@ gameScene.create = () => {
 	});
 };
 
-gameScene.changeModeToSelect = (sprite) => {
+/**	
+ * Select a move for the player
+ */
+gameScene.selectMove = (sprite) => {
 	
 	// prevent things being select during shooting mode
 	if (gameScene.mode == SHOOTING_MODE) return;
@@ -238,6 +254,9 @@ gameScene.changeModeToSelect = (sprite) => {
 	gameScene.selectedSprite = sprite;
 };
 
+/**	
+ * Finalizes and the move and triggeers the animations
+ */
 gameScene.shoot = () => {
 	if (gameScene.mode != BEFORE_SHOT_MODE) return;
 	gameScene.mode = SHOOTING_MODE;
@@ -267,6 +286,9 @@ gameScene.shoot = () => {
 	}	
 };
 
+/**
+ * Resets the game back to normal
+ */
 gameScene.reset = () => {
 	gameScene.mode = NOTHING_SELECTION_MODE;
 	gameScene.selectedSprite = null;
@@ -288,6 +310,9 @@ gameScene.reset = () => {
 	
 };
 
+/**
+ * Determines who won the game
+ */
 gameScene.whoWon = (playerKey, computerKey) => {
 	if (gameScene.rules[playerKey] == computerKey) {
 		return OUTCOME_PLAYER_WON;
@@ -300,10 +325,16 @@ gameScene.whoWon = (playerKey, computerKey) => {
 	return OUTCOME_TIE;
 };
 
+/** 
+ * Updates the score text
+ */
 gameScene.updateScore = () => {
 	gameScene.scoreText.setText(gameScene.playerWins + " / " + gameScene.computerWins);
 };
 
+/**
+ * Resets all the player sprites back to alpha of 1
+ */
 gameScene.resetAlphasOnPlayerSprites = () => {
 	gameScene.playerSprites.forEach(sprite => {
 		sprite.alpha = 1;
